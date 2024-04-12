@@ -12,6 +12,40 @@ class KNN(object):
         self.k = k
         self.task_kind =task_kind
 
+    def euclidean_dist(self, example, training_examples):
+        """Compute the Euclidean distance between a single example
+        vector and all training_examples.
+    
+        Inputs:
+            example: shape (D,)
+            training_examples: shape (NxD) 
+        Outputs:
+            euclidean distances: shape (N,)
+        """
+        
+        return np.sqrt(((training_examples - example) ** 2).sum(axis=1))
+
+    def label_find(self, test_point):
+        """
+            Return the predicted label by calculating all the distances between the point and all the 
+            training_data and then returning the most frequent one from k nearest neighbors
+
+            Arguments:
+                test_point (np.array): point that we want to label (,D)
+            Outputs:
+                predicted label: label of the shape
+        """
+        
+        euclid_distances = euclidian_dist(test_point, train_data)
+        kNearest = np.argpartition(euclid_distances, k)
+        labels = np.zeros(kNearest.size)
+        index_kNearest = 0
+        for j in kNearest:
+            labels[index_kNearest] = train_labels[j]
+            index_kNearest += 1
+        
+        return np.bincount(labels).argmax()
+
     def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.
@@ -32,6 +66,10 @@ class KNN(object):
         #### YOUR CODE HERE!
         ###
         ##
+        self.train_data = training_data
+        self.train_labels = training_labels
+        pred_labels = training_labels
+        
         return pred_labels
 
     def predict(self, test_data):
@@ -48,4 +86,9 @@ class KNN(object):
         #### YOUR CODE HERE!
         ###
         ##
+        nbOfData = test_data.shape[1]
+        test_labels = np.zeroes(nbOfData)
+        for i in range(nbOfData):
+            test_labels[i] = label_find(self, test_data[i, :])
+            
         return test_labels
