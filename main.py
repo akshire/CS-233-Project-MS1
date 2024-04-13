@@ -41,15 +41,37 @@ def main(args):
 
     ## 2. Then we must prepare it. This is were you can create a validation set,
     #  normalize, add bias, etc.
+    
 
     # Make a validation set (it can overwrite xtest, ytest)
     if not args.test:
         ### WRITE YOUR CODE HERE
+        fraction_train = 0.7
+        test_random_indexes = np.random.permutation(xtrain.shape[0])
+        
+        n_train = int(xtrain.shape[0]*fraction_train)
+        xdata = xtrain
+        ydata = ytrain
+        
+        xtrain = xdata[test_random_indexes[:n_train]]
+        ytrain = ydata[test_random_indexes[:n_train]] 
+        
+        xtest = xdata[test_random_indexes[n_train:]] 
+        ytest = ydata[test_random_indexes[n_train:]] 
+        
         pass
     
     ### WRITE YOUR CODE HERE to do any other data processing
-
     
+    xtest = normalize_fn(xtest, xtrain.mean(0,keepdims=True), xtrain.std(0,keepdims=True))
+    xtest = append_bias_term(xtest)
+
+    xtrain = normalize_fn(xtrain, xtrain.mean(0,keepdims=True), xtrain.std(0,keepdims=True))
+    xtrain = append_bias_term(xtrain)
+    
+    
+    
+
 
     ## 3. Initialize the method you want to use.
 
@@ -61,8 +83,12 @@ def main(args):
     if args.method == "dummy_classifier":
         method_obj = DummyClassifier(arg1=1, arg2=2)
 
-    elif ...:  ### WRITE YOUR CODE HERE
+    elif args.method == "linear_regression":  ### WRITE YOUR CODE HERE
+        method_obj = LinearRegression(0)
         pass
+
+    elif args.method == "logistical_regression":
+        method_obj = LogisticRegression()
 
 
     ## 4. Train and evaluate the method
