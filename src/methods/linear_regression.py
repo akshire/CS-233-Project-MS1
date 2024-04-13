@@ -8,14 +8,13 @@ class LinearRegression(object):
         Recall that linear regression is just ridge regression with lambda=0.
     """
 
-    def __init__(self, lmda, fit, epochs):
+    def __init__(self, lmda, epochs):
         """
             Initialize the task_kind (see dummy_methods.py)
             and call set_arguments function of this class.
         """
         self.lmda = lmda
         self.epochs = epochs #nrb of tries
-        self.W = fit
         
 
     
@@ -39,7 +38,8 @@ class LinearRegression(object):
             return w
         
 
-        pred_regression_targets = get_W(training_data,training_labels)
+        self.W = get_W(training_data,training_labels)
+        pred_regression_targets = np.sum(np.transpose(self.W) * training_data,axis=1)
         return pred_regression_targets
 
 
