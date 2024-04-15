@@ -68,7 +68,10 @@ class KNN(object):
         ##
         self.train_data = training_data
         self.train_labels = training_labels
-        pred_labels = training_labels
+        nbOfData = training.data.shape[1]
+        pred_labels = np.zeros(nbOfData)
+        for i in range(nbOfData):
+            pred_labels[i] = label_find(self, training_data[i, :])
         
         return pred_labels
 
