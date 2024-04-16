@@ -10,12 +10,12 @@ class KNN(object):
             Call set_arguments function of this class.
         """
         self.k = k
-        self.task_kind =task_kind
+        self.task_kind = task_kind
 
     def euclidean_dist(self, example, training_examples):
         """Compute the Euclidean distance between a single example
         vector and all training_examples.
-    
+
         Inputs:
             example: shape (D,)
             training_examples: shape (NxD) 
@@ -36,13 +36,13 @@ class KNN(object):
                 predicted label: label of the shape
         """
         
-        euclid_distances = euclidian_dist(test_point, train_data)
-        kNearest = np.argpartition(euclid_distances, k)
-        labels = np.zeros(kNearest.size)
-        index_kNearest = 0
+        euclid_distances = self.euclidian_dist(self, test_point, self.train_data)
+        kNearest = np.argpartition(euclid_distances, self.k)
+        labels = np.zeros(kNearest.size)
+        index_kNearest = 0
         for j in kNearest:
-            labels[index_kNearest] = train_labels[j]
-            index_kNearest += 1
+            labels[index_kNearest] = self.train_labels[j]
+            index_kNearest += 1
         
         return np.bincount(labels).argmax()
 
@@ -67,11 +67,11 @@ class KNN(object):
         ###
         ##
         self.train_data = training_data
-        self.train_labels = training_labels
-        nbOfData = training.data.shape[1]
-        pred_labels = np.zeros(nbOfData)
+        self.train_labels = training_labels
+        nbOfData = self.training_data.shape[1]
+        pred_labels = np.zeros(nbOfData)
         for i in range(nbOfData):
-            pred_labels[i] = label_find(self, training_data[i, :])
+            pred_labels[i] = self.label_find(self, training_data[i, :])
         
         return pred_labels
 
@@ -89,9 +89,9 @@ class KNN(object):
         #### YOUR CODE HERE!
         ###
         ##
-        nbOfData = test_data.shape[1]
+        nbOfData = test_data.shape[1]
         test_labels = np.zeroes(nbOfData)
         for i in range(nbOfData):
-            test_labels[i] = label_find(self, test_data[i, :])
+            test_labels[i] = self.label_find(self, test_data[i, :])
             
         return test_labels
