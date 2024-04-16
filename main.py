@@ -47,6 +47,8 @@ def main(args):
     if not args.test:
         ### WRITE YOUR CODE HERE
         fraction_train = 0.7
+
+        
         test_random_indexes = np.random.permutation(xtrain.shape[0])
         
         n_train = int(xtrain.shape[0]*fraction_train)
@@ -68,6 +70,14 @@ def main(args):
 
     xtrain = normalize_fn(xtrain, xtrain.mean(0,keepdims=True), xtrain.std(0,keepdims=True))
     xtrain = append_bias_term(xtrain)
+
+    ctest = normalize_fn(ctest,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
+    ctest = append_bias_term(ctest)
+    
+    ctrain = normalize_fn(ctrain,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
+    ctrain = append_bias_term(ctrain)
+
+    
 
 
     print("XTRAIN SHAPE : ",xtrain.shape)
