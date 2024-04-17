@@ -8,7 +8,7 @@ class LinearRegression(object):
         Recall that linear regression is just ridge regression with lambda=0.
     """
 
-    def __init__(self, lmda, epochs=15000):
+    def __init__(self, lmda, epochs=150):
         """
             Initialize the task_kind (see dummy_methods.py)
             and call set_arguments function of this class.
@@ -31,19 +31,21 @@ class LinearRegression(object):
         def get_W(data,labels):
             w = np.random.normal(0, 1e-1, [data.shape[1],labels.shape[1]])
             for try_Nbr in range(self.epochs):
-                Y = data @ w
-                print("W shape :",w.shape)
-                print("data shape :",data.shape)
-                print("Y_hat shape :",Y.shape)
-                gradient = 1/data.shape[0] * 2 * np.sum(np.transpose(data) @ (Y-labels),axis=0)
-                print("gradient shape :",gradient.shape)
-                w = w - self.lmda * gradient
+                Y_hat = data @ w #should be Y.trans = W.trans @ data.trans but these are equivalent
+                print("W shape :",w)
+                #print("data shape :",data.shape)
+                #print("Y_hat shape :",Y.shape)
+                ## what is the gradient: 
+                gradient =  1/data.shape[0] * np.transpose(np.transpose(Y_hat-labels)@data)
+                print("gradient shape :",gradient)
+                w = w - (self.lmda * gradient)
 
             return w
         
         print("XTRAIN SHAPE : ",training_data.shape)
         print("YTRAIN SHAPE : ",training_labels.shape)        
         self.W = get_W(training_data,training_labels)
+        print("W shape is :",self.W)
         pred_regression_targets = training_data @ self.W
         return pred_regression_targets
 
