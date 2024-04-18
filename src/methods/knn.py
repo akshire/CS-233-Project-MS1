@@ -75,9 +75,23 @@ class KNN(object):
         nbOfData = training_data.shape[0]
         pred_labels = np.zeros(nbOfData)
         for i in range(nbOfData):
-            pred_labels[i] = self.label_find(training_data[i, :], i)
+            dataWithoutTestedPoint = np.delete(training_data, i, 0)
+            labelsWithoutTestedPoint = np.delete(training_labels, i, 0)
+            
+            euclid_distances = self.euclidean_dist(training_data[i], dataWithoutTestedPoint)
+            kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
+            labels = np.zeros(self.k)
+            index_kNearest = 0
+            for j in kNearest:
+                labels[index_kNearest] = labelsWithoutTestedPoint[j]
+                index_kNearest += 1
+    
+            uniqueLabels, labelsCountFrequency = np.unique(labels, return_counts = True)
+            pred_labels[i] = uniqueLabels[labelsCountFrequency.argmax()]
+        
+        return pred_labels
         """
-        return self.predict(training_data)
+        return training_labels
 
     def predict(self, test_data):
         """
