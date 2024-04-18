@@ -74,12 +74,16 @@ class TestProject(unittest.TestCase):
         method = module.__getattribute__(class_name)(*args, **kwargs)
         for fn in ["fit", "predict"]:
             _ = method.__getattribute__(fn)
-        
+
         # Functions inputs and outputs
-        N, D = 10, 3
+        N, D, D_r = 10, 3, 2
         training_data = np.random.rand(N, D)
-        training_labels = np.random.randint(0, D, N)
+        if method.task_kind == 'classification':
+            training_labels = np.random.randint(0, D, N)
+        elif method.task_kind == 'regression':
+            training_labels = np.random.rand(N, D_r)
         test_data = np.random.rand(N, D)
+
         with no_print():
             pred_labels = method.fit(training_data, training_labels)
         self.assertIsInstance(pred_labels, np.ndarray, f"{name}.{class_name}.fit() should output an array, not {type(pred_labels)}")
@@ -101,7 +105,7 @@ class TestProject(unittest.TestCase):
     
 
     def test_3a_knn(self):
-        """Test K-Means."""
+        """Test KNN."""
         self.title("Testing KNN")
 
         knn_model = self._import_and_test("knn", "KNN",k=1)
@@ -125,15 +129,15 @@ class TestProject(unittest.TestCase):
         logistic_regression = self._import_and_test("logistic_regression", "LogisticRegression",
                                                     lr=1e-3, max_iters=500)
 
-        # Test on easy dummy data
+        #  Test on easy dummy data
         N = 20
         training_data = np.concatenate([
-            np.linspace(-5, -0.25, N//2)[:,None],
-            np.linspace(0.25, 5, N//2)[:,None]
+            np.linspace(-5, -0.25, N // 2)[:, None],
+            np.linspace(0.25, 5, N // 2)[:, None]
         ], axis=0)
-        training_labels = (training_data[:,0] > 0.).astype(int)
+        training_labels = (training_data[:, 0] > 0.).astype(int)
         test_data = np.array([-10., -5., -1., 1., 5., 10.])[:, None]
-        test_labels = (test_data[:,0] > 0.).astype(int)
+        test_labels = (test_data[:, 0] > 0.).astype(int)
         with no_print():
             pred_labels_train = logistic_regression.fit(training_data, training_labels)
             pred_labels_test = logistic_regression.predict(test_data)
