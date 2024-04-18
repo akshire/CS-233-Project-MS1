@@ -13,38 +13,41 @@ class KNN(object):
         self.task_kind = task_kind
 
     def euclidean_dist(self, example, training_examples):
-        """Compute the Euclidean distance between a single example
-        vector and all training_examples.
+        """
+            Compute the Euclidean distance between a single example
+            vector and all training_examples.
 
-        Inputs:
-            example: shape (D,)
-            training_examples: shape (NxD) 
-        Outputs:
-            euclidean distances: shape (N,)
+            Inputs:
+                example: shape (D,)
+                training_examples: shape (NxD) 
+            Outputs:
+                euclidean distances: shape (N,)
         """
         
         return np.sqrt(((training_examples - example) ** 2).sum(axis=1))
 
-    def label_find(self, test_point):
+    def label_find(self, test_point, index):
         """
             Return the predicted label by calculating all the distances between the point and all the 
             training_data and then returning the most frequent one from k nearest neighbors
 
             Arguments:
                 test_point (np.array): point that we want to label (,D)
+                index : position of the test_point in the original array
             Outputs:
                 predicted label: label of the shape
         """
-        
-        euclid_distances = self.euclidian_dist(self, test_point, self.train_data)
-        kNearest = np.argpartition(euclid_distances, self.k)
-        labels = np.zeros(kNearest.size)
+
+        euclid_distances = self.euclidean_dist(test_point, np.delete(self.train_data, (index), axis = 0))
+        kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
+        labels = np.zeros(self.k)
         index_kNearest = 0
         for j in kNearest:
             labels[index_kNearest] = self.train_labels[j]
             index_kNearest += 1
-        
-        return np.bincount(labels).argmax()
+
+        uniqueLabels, labelsCountFrequency = np.unique(labels, return_counts = True)
+        return uniqueLabels[labelsCountFrequency.argmax()]
 
     def fit(self, training_data, training_labels):
         """
@@ -68,10 +71,10 @@ class KNN(object):
         ##
         self.train_data = training_data
         self.train_labels = training_labels
-        nbOfData = self.training_data.shape[1]
+        nbOfData = training_data.shape[0]
         pred_labels = np.zeros(nbOfData)
         for i in range(nbOfData):
-            pred_labels[i] = self.label_find(self, training_data[i, :])
+            pred_labels[i] = self.label_find(training_data[i, :], i)
         
         return pred_labels
 
@@ -89,9 +92,9 @@ class KNN(object):
         #### YOUR CODE HERE!
         ###
         ##
-        nbOfData = test_data.shape[1]
-        test_labels = np.zeroes(nbOfData)
+        nbOfData = test_data.shape[0]
+        test_labels = np.zeros(nbOfData)
         for i in range(nbOfData):
-            test_labels[i] = self.label_find(self, test_data[i, :])
+            test_labels[i] = self.label_find(test_data[i, :], i)
             
         return test_labels
