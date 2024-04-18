@@ -26,29 +26,55 @@ class KNN(object):
         
         return np.sqrt(((training_examples - example) ** 2).sum(axis=1))
 
-    def label_find(self, test_point):
+    def computeKNearest(self, test_point, index, bool):
+        """
+            Compute the labels of the k nearest neighbors
+
+            Arguments:
+                test_point (np.array): point that we want to label (,D)
+                index (not used): position of the test_point in the original array
+                bool: boolean value to determin if we are either in fit (= 0) or prediction(= 1)
+            Outputs:
+                labels: labels of the k nearest neighbors (k,)
+        """
+        
+        euclid_distances = self.euclidean_dist(test_point, np.delete(self.train_data, index, 0) if (not bool) else self.train_data)
+        kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
+        labels = np.zeros(self.k)
+        index_kNearest = 0
+        if (not bool):
+            labelsWithoutTestedPoint = np.delete(self.train_labels, index, 0)
+            for j in kNearest:
+                labels[index_kNearest] = labelsWithoutTestedPoint[j]
+                index_kNearest += 1
+        else:
+            for j in kNearest:
+                labels[index_kNearest] = self.train_labels[j]
+                index_kNearest += 1
+                
+        return labels
+
+    def label_find(self, test_point, index, bool):
         """
             Return the predicted label by calculating all the distances between the point and all the 
             training_data and then returning the most frequent one from k nearest neighbors
 
             Arguments:
                 test_point (np.array): point that we want to label (,D)
-                index : position of the test_point in the original array
+                index (not used): position of the test_point in the original array
+                bool: boolean value to determin if we are either in fit (= 0) or prediction(= 1)
             Outputs:
                 predicted label: label of the shape
         """
 
-        euclid_distances = self.euclidean_dist(test_point, self.train_data)
-        kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
-        labels = np.zeros(self.k)
-        index_kNearest = 0
-        for j in kNearest:
-            labels[index_kNearest] = self.train_labels[j]
-            index_kNearest += 1
+        kNearestLabels = self.computeKNearest(test_point, index, bool)
+        if (self.task_kind == "classification"):
+            uniqueLabels, labelsCountFrequency = np.unique(kNearestLabels, return_counts = True)
+            return uniqueLabels[labelsCountFrequency.argmax()]
+        else:
+            return np.mean(labels)
 
-        uniqueLabels, labelsCountFrequency = np.unique(labels, return_counts = True)
-        return uniqueLabels[labelsCountFrequency.argmax()]
-
+        
     def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.
@@ -71,27 +97,13 @@ class KNN(object):
         ##
         self.train_data = training_data
         self.train_labels = training_labels
-        """
         nbOfData = training_data.shape[0]
         pred_labels = np.zeros(nbOfData)
+
         for i in range(nbOfData):
-            dataWithoutTestedPoint = np.delete(training_data, i, 0)
-            labelsWithoutTestedPoint = np.delete(training_labels, i, 0)
-            
-            euclid_distances = self.euclidean_dist(training_data[i], dataWithoutTestedPoint)
-            kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
-            labels = np.zeros(self.k)
-            index_kNearest = 0
-            for j in kNearest:
-                labels[index_kNearest] = labelsWithoutTestedPoint[j]
-                index_kNearest += 1
-    
-            uniqueLabels, labelsCountFrequency = np.unique(labels, return_counts = True)
-            pred_labels[i] = uniqueLabels[labelsCountFrequency.argmax()]
+            pred_labels[i] = self.label_find(training_data[i, :], i, 0)
         
         return pred_labels
-        """
-        return training_labels
 
     def predict(self, test_data):
         """
@@ -109,7 +121,8 @@ class KNN(object):
         ##
         nbOfData = test_data.shape[0]
         test_labels = np.zeros(nbOfData)
+        
         for i in range(nbOfData):
-            test_labels[i] = self.label_find(test_data[i, :])
+            test_labels[i] = self.label_find(test_data[i, :], i, 1)
             
         return test_labels
