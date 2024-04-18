@@ -8,7 +8,7 @@ class LogisticRegression(object):
     Logistic regression classifier.
     """
 
-    def __init__(self, lr = 1, max_iters=500):
+    def __init__(self, lr = 1, max_iters=500, task_kind = 'classification'):
         """
         Initialize the new object (see dummy_methods.py)
         and set its arguments.
@@ -20,6 +20,7 @@ class LogisticRegression(object):
         self.lr = lr
         self.max_iters = max_iters
         self.weights = None
+        self.task_kind = task_kind
 
 
     def fit(self, training_data, training_labels):
