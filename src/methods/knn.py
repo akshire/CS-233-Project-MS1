@@ -37,10 +37,6 @@ class KNN(object):
             Outputs:
                 labels: labels of the k nearest neighbors (k,)
         """
-
-        
-
-        
         euclid_distances = self.euclidean_dist(test_point,self.train_data)
         kNearest_labels = self.train_labels[np.argpartition(euclid_distances, self.k)[:self.k]]
         #TODO add weight values        
@@ -67,8 +63,9 @@ class KNN(object):
             #uniqueLabels, labelsCountFrequency = np.unique(kNearestLabels, return_counts = True)
             return nbr_label_of_each_type.argmax()
         else:
-            print("Regression")
-            return np.mean(kNearestLabels)
+            euclid_distances = self.euclidean_dist(test_point,self.train_data)
+            kNearest_points = self.train_labels[np.argpartition(euclid_distances, self.k)[:self.k]]
+            return np.mean(kNearest_points,axis=0)
 
         
     def fit(self, training_data, training_labels):
@@ -94,7 +91,8 @@ class KNN(object):
         self.train_data = training_data
         self.train_labels = training_labels
         nbOfData = training_data.shape[0]
-        pred_labels = np.zeros(nbOfData,dtype=int)
+        pred_labels = np.zeros([nbOfData,training_labels.shape[1]])
+        #TODO could add a helper to choose k
 
         for i in range(nbOfData):
             pred_labels[i] = self.label_find(training_data[i, :])
@@ -115,8 +113,7 @@ class KNN(object):
         ###
         ##
         nbOfData = test_data.shape[0]
-        test_labels = np.zeros(nbOfData,dtype=int)
-        print(self.task_kind)
+        test_labels = np.zeros([nbOfData,self.train_labels.shape[1]])
         for i in range(nbOfData):
             test_labels[i] = self.label_find(test_data[i, :])
         return test_labels
