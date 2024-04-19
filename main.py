@@ -99,7 +99,7 @@ def main(args):
     if args.method == "dummy_classifier":
         method_obj = DummyClassifier(arg1=1, arg2=2)
 
-    elif args.method == "linear_regression":  ### WRITE YOUR CODE HERE
+    elif args.method == "linear_regression": 
         method_obj = LinearRegression(lmda = args.lmda)
         pass
 
@@ -108,7 +108,11 @@ def main(args):
         pass
 
     elif args.method == "knn":
-        method_obj = KNN(k = args.K, task_kind = args.task)
+        if args.task == "center_locating":
+            task_kind = 'regression'
+        elif args.task == "breed_identifying":
+            task_kind = 'classification'
+        method_obj = KNN(k = args.K, task_kind = task_kind)
         pass
 
 

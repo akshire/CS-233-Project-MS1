@@ -5,7 +5,7 @@ class KNN(object):
         kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind = "breed_identifying"):
+    def __init__(self, k=1, task_kind = "regression"):
         """
             Call set_arguments function of this class.
         """
@@ -57,10 +57,16 @@ class KNN(object):
                 predicted label: label of the shape
         """
 
-        kNearestLabels = self.computeKNearest(test_point)
-        if (self.task_kind == "breed_identifying"):
-            nbr_label_of_each_type = np.bincount(kNearestLabels)
-            #uniqueLabels, labelsCountFrequency = np.unique(kNearestLabels, return_counts = True)
+        if (self.task_kind == "classification"):
+            euclid_distances = self.euclidean_dist(test_point,self.train_data)
+            indexes = np.argpartition(euclid_distances, self.k)[:self.k]
+            kNearest_labels = self.train_labels[indexes]
+            euclid_distances_nearest = euclid_distances[indexes]
+            weights = 1/euclid_distances_nearest
+
+
+
+            nbr_label_of_each_type = np.bincount(kNearest_labels,weights)
             return nbr_label_of_each_type.argmax()
         else:
             euclid_distances = self.euclidean_dist(test_point,self.train_data)
@@ -91,7 +97,8 @@ class KNN(object):
         self.train_data = training_data
         self.train_labels = training_labels
         nbOfData = training_data.shape[0]
-        pred_labels = np.zeros([nbOfData,training_labels.shape[1]])
+        print("shape output ", training_labels.shape)
+        pred_labels = np.zeros(training_labels.shape)
         #TODO could add a helper to choose k
 
         for i in range(nbOfData):
@@ -113,7 +120,12 @@ class KNN(object):
         ###
         ##
         nbOfData = test_data.shape[0]
-        test_labels = np.zeros([nbOfData,self.train_labels.shape[1]])
+        size_of_outputs = len(self.train_labels.shape)
+        if size_of_outputs < 2:
+            test_labels = np.zeros([nbOfData])
+        else:
+            size_of_outputs = self.train_labels.shape[1]
+            test_labels = np.zeros([nbOfData,size_of_outputs])
         for i in range(nbOfData):
             test_labels[i] = self.label_find(test_data[i, :])
         return test_labels
