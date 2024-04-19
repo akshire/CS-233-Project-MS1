@@ -58,6 +58,10 @@ def main(args):
         
         xtest = xdata[test_random_indexes[n_train:]] 
         ytest = ydata[test_random_indexes[n_train:]] 
+
+        ctest = ctrain[test_random_indexes[n_train:]] 
+        ctrain = ctrain[test_random_indexes[:n_train]] 
+
         
         pass
     
@@ -70,11 +74,8 @@ def main(args):
     xtrain = append_bias_term(xtrain)
 
     ctest = normalize_fn(ctest,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
-    ctest = append_bias_term(ctest)
     
     ctrain = normalize_fn(ctrain,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
-    ctrain = append_bias_term(ctrain)
-
     
 
 
@@ -107,7 +108,7 @@ def main(args):
         pass
 
     elif args.method == "knn":
-        method_obj = KNN(k = args.k, task_kind = args.task_kind)
+        method_obj = KNN(k = args.K, task_kind = args.task)
         pass
 
 

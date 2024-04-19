@@ -5,7 +5,7 @@ class KNN(object):
         kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind = "classification"):
+    def __init__(self, k=1, task_kind = "breed_identifying"):
         """
             Call set_arguments function of this class.
         """
@@ -26,7 +26,7 @@ class KNN(object):
         
         return np.sqrt(((training_examples - example) ** 2).sum(axis=1))
 
-    def computeKNearest(self, test_point, index, bool):
+    def computeKNearest(self, test_point):
         """
             Compute the labels of the k nearest neighbors
 
@@ -37,24 +37,18 @@ class KNN(object):
             Outputs:
                 labels: labels of the k nearest neighbors (k,)
         """
-        
-        euclid_distances = self.euclidean_dist(test_point, np.delete(self.train_data, index, 0) if (not bool) else self.train_data)
-        kNearest = np.argpartition(euclid_distances, self.k)[:self.k]
-        labels = np.zeros(self.k)
-        index_kNearest = 0
-        if (not bool):
-            labelsWithoutTestedPoint = np.delete(self.train_labels, index, 0)
-            for j in kNearest:
-                labels[index_kNearest] = labelsWithoutTestedPoint[j]
-                index_kNearest += 1
-        else:
-            for j in kNearest:
-                labels[index_kNearest] = self.train_labels[j]
-                index_kNearest += 1
-                
-        return labels
 
-    def label_find(self, test_point, index, bool):
+        
+
+        
+        euclid_distances = self.euclidean_dist(test_point,self.train_data)
+        kNearest_labels = self.train_labels[np.argpartition(euclid_distances, self.k)[:self.k]]
+        #TODO add weight values        
+        
+                
+        return kNearest_labels
+
+    def label_find(self, test_point):
         """
             Return the predicted label by calculating all the distances between the point and all the 
             training_data and then returning the most frequent one from k nearest neighbors
@@ -67,12 +61,14 @@ class KNN(object):
                 predicted label: label of the shape
         """
 
-        kNearestLabels = self.computeKNearest(test_point, index, bool)
-        if (self.task_kind == "classification"):
-            uniqueLabels, labelsCountFrequency = np.unique(kNearestLabels, return_counts = True)
-            return uniqueLabels[labelsCountFrequency.argmax()]
+        kNearestLabels = self.computeKNearest(test_point)
+        if (self.task_kind == "breed_identifying"):
+            nbr_label_of_each_type = np.bincount(kNearestLabels)
+            #uniqueLabels, labelsCountFrequency = np.unique(kNearestLabels, return_counts = True)
+            return nbr_label_of_each_type.argmax()
         else:
-            return np.mean(labels)
+            print("Regression")
+            return np.mean(kNearestLabels)
 
         
     def fit(self, training_data, training_labels):
@@ -98,11 +94,10 @@ class KNN(object):
         self.train_data = training_data
         self.train_labels = training_labels
         nbOfData = training_data.shape[0]
-        pred_labels = np.zeros(nbOfData)
+        pred_labels = np.zeros(nbOfData,dtype=int)
 
         for i in range(nbOfData):
-            pred_labels[i] = self.label_find(training_data[i, :], i, 0)
-        
+            pred_labels[i] = self.label_find(training_data[i, :])
         return pred_labels
 
     def predict(self, test_data):
@@ -120,9 +115,8 @@ class KNN(object):
         ###
         ##
         nbOfData = test_data.shape[0]
-        test_labels = np.zeros(nbOfData)
-        
+        test_labels = np.zeros(nbOfData,dtype=int)
+        print(self.task_kind)
         for i in range(nbOfData):
-            test_labels[i] = self.label_find(test_data[i, :], i, 1)
-            
+            test_labels[i] = self.label_find(test_data[i, :])
         return test_labels
