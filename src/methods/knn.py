@@ -59,19 +59,25 @@ class KNN(object):
 
         if (self.task_kind == "classification"):
             euclid_distances = self.euclidean_dist(test_point,self.train_data)
+            #gets indexes of the k nearest samples
             indexes = np.argpartition(euclid_distances, self.k)[:self.k]
             kNearest_labels = self.train_labels[indexes]
             euclid_distances_nearest = euclid_distances[indexes]
+            #set a minimum distance value to avoid division by zero problems
+            euclid_distances_nearest[euclid_distances_nearest<0.001] = 0.001
             weights = 1/euclid_distances_nearest
-
-
-
             nbr_label_of_each_type = np.bincount(kNearest_labels,weights)
             return nbr_label_of_each_type.argmax()
         else:
             euclid_distances = self.euclidean_dist(test_point,self.train_data)
-            kNearest_points = self.train_labels[np.argpartition(euclid_distances, self.k)[:self.k]]
-            return np.mean(kNearest_points,axis=0)
+            indexes = np.argpartition(euclid_distances, self.k)[:self.k]
+            euclid_distances_nearest = euclid_distances[indexes]
+            kNearest_points = self.train_labels[indexes]
+            #set a minimum distance value to avoid division by zero problems
+            euclid_distances_nearest[euclid_distances_nearest<0.001] = 0.001
+            weights = 1/euclid_distances_nearest
+
+            return np.average(kNearest_points,weights=weights,axis=0)
 
         
     def fit(self, training_data, training_labels):
