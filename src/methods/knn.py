@@ -97,7 +97,6 @@ class KNN(object):
         self.train_data = training_data
         self.train_labels = training_labels
         nbOfData = training_data.shape[0]
-        print("shape output ", training_labels.shape)
         pred_labels = np.zeros(training_labels.shape)
         #TODO could add a helper to choose k
 

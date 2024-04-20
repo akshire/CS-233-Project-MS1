@@ -34,11 +34,7 @@ class LinearRegression(object):
             W = inverted @ np.transpose(data) @ labels
             return W
         
-        print("INPUT SHAPE : ",training_data.shape)
-        print("OUTPUT SHAPE : ",training_labels.shape)        
         self.W = get_W(training_data,training_labels)
-        print("W shape:",self.W.shape)
-        print("W :",self.W)
         pred_regression_targets = training_data @ self.W
         return pred_regression_targets
 
