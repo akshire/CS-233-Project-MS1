@@ -56,13 +56,5 @@ class LinearRegression(object):
             Returns:
                 test_labels (np.array): labels of shape (N,regression_target_size)
         """
-        ##
-        ###
-        #### YOUR CODE HERE!
-        ###
-        ##
-        W = self.W
         pred_regression_targets = test_data @ self.W
-        
-
         return pred_regression_targets
