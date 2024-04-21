@@ -30,7 +30,7 @@ class LinearRegression(object):
         """
         def get_W(data,labels):
             """
-                Computes the model parameter matrix
+                Computes the model parameter matrix using ridge regression
                 Arguments:
                     data (np.array): training data of shape (N,D)
                     labels (np.array): regression target of shape (N,regression_target_size)
@@ -50,7 +50,8 @@ class LinearRegression(object):
     def predict(self, test_data):
         """
             Runs prediction on the test data.
-            
+            Same as in the fit all that is needed is to do a matrix multiplication 
+            between the testing data and the model parameter matrix
             Arguments:
                 test_data (np.array): test data of shape (N,D)
             Returns:

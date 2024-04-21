@@ -8,6 +8,7 @@ from src.methods.logistic_regression import LogisticRegression
 from src.methods.linear_regression import LinearRegression 
 from src.methods.knn import KNN
 from src.utils import normalize_fn, append_bias_term, accuracy_fn, macrof1_fn, mse_fn
+import time
 import os
 np.random.seed(100)
 
@@ -110,13 +111,15 @@ def main(args):
 
     if args.task == "center_locating":
         # Fit parameters on training data
+        zero = time.time()
         preds_train = method_obj.fit(xtrain, ctrain)
-
+        fit = time.time()
         # Perform inference for training and test data
         train_pred = method_obj.predict(xtrain)
         preds = method_obj.predict(xtest)
-
+        pred = time.time()
         ## Report results: performance on train and valid/test sets
+        print(f"Time to fit {fit-zero:.3f} seconds \nTime to predict {pred-fit:.3f} seconds")
         train_loss = mse_fn(train_pred, ctrain)
         loss = mse_fn(preds, ctest)
 
@@ -125,14 +128,16 @@ def main(args):
     elif args.task == "breed_identifying":
 
         # Fit (:=train) the method on the training data for classification task
+        zero = time.time()
         preds_train = method_obj.fit(xtrain, ytrain)
-
+        fit = time.time()
         # Predict on unseen data
         preds = method_obj.predict(xtest)
-
+        pred = time.time()
         ## Report results: performance on train and valid/test sets
         acc = accuracy_fn(preds_train, ytrain)
         macrof1 = macrof1_fn(preds_train, ytrain)
+        print(f"Time to fit {fit-zero:.3f} seconds \nTime to predict {pred-fit:.3f} seconds")
         print(f"\nTrain set: accuracy = {acc:.3f}% - F1-score = {macrof1:.6f}")
 
         acc = accuracy_fn(preds, ytest)
@@ -160,7 +165,7 @@ if __name__ == '__main__':
 
 
     # Feel free to add more arguments here if you need!
-    parser.add_argument('--kNN_help', type=bool, default=False, help="For kNN classification, should the K-fold method be used to print the best k (much slower)")
+    parser.add_argument('--kNN_help', action="store_true", help="For kNN classification, should the K-fold method be used to print the best k (much slower)")
     parser.add_argument('--Kfold_values_folds',type=int, default = 5,help="Give the amount of folds K for K-fold")
     parser.add_argument('--Kfold_values_start',type=int, default = 4,help="Give the starting k for K-fold")
     parser.add_argument('--Kfold_values_end',type=int, default = 40,help="Give the end k for K-fold")
