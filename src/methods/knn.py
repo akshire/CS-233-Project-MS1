@@ -5,12 +5,14 @@ class KNN(object):
         kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind = "regression"):
+    def __init__(self, k=1, task_kind = "regression", help = False, help_parameters = [1,40,4]):
         """
             Call set_arguments function of this class.
         """
         self.k = k
         self.task_kind = task_kind
+        self.help = help
+        self.help_parameters = help_parameters
 
     def euclidean_dist(self, example, training_examples):
         """
@@ -61,7 +63,7 @@ class KNN(object):
             return
 
         
-    def fit(self, training_data, training_labels,help = True):
+    def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.
             Hint: Since KNN does not really have parameters to train, you can try saving the training_data
@@ -79,7 +81,7 @@ class KNN(object):
         self.train_labels = training_labels
         nbOfData = training_data.shape[0]
         pred_labels = np.zeros(training_labels.shape)
-        def Kfold(folds=5,start=1,spacing=5,end=100):
+        def Kfold(folds=5,start=1,spacing=4,end=40):
             k_list = range(start,end,spacing)
             best_k = 0 # only store best value
             k_acc = 0
@@ -99,8 +101,8 @@ class KNN(object):
                     test_data = self.train_data[test_indexes, :]
                     test_labels = self.train_labels[test_indexes]
                     # do knn and save accuracy to the accuracy list of this fold
-                    method_obj = KNN(k = k, task_kind = self.task_kind)
-                    method_obj.fit(train_data,train_labels,False)
+                    method_obj = KNN(k = k, task_kind = self.task_kind,help=False)
+                    method_obj.fit(train_data,train_labels)
                     pred = method_obj.predict(test_data)
                     acc = np.size(test_labels[pred==test_labels])/np.size(test_labels)
                     accuracies.append(acc)
@@ -112,8 +114,8 @@ class KNN(object):
             print(f"The best k between {start} and {end} with a spacing of {spacing} is {best_k}")
             print("It has an accuracy of :", k_acc)
 
-        if (help & (self.task_kind == "classification")):
-            Kfold(spacing=1,end=30)
+        if (self.help & (self.task_kind == "classification")):
+            Kfold(start=self.help_parameters[0],end=self.help_parameters[1],spacing=self.help_parameters[2])
 
 
 
