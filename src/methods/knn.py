@@ -5,7 +5,7 @@ class KNN(object):
         kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind = "regression", help = False, help_parameters = [5,1,40,4]):
+    def __init__(self, k=20, task_kind = "regression", help = False, help_parameters = [5,1,40,4]):
         """
             Call set_arguments function of this class.
         """
