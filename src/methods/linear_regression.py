@@ -29,6 +29,14 @@ class LinearRegression(object):
                 pred_labels (np.array): target of shape (N,regression_target_size)
         """
         def get_W(data,labels):
+            """
+                Computes the model parameter matrix
+                Arguments:
+                    data (np.array): training data of shape (N,D)
+                    labels (np.array): regression target of shape (N,regression_target_size)
+                Returns:
+                    W (np.array): matrix of model parameters of shape (D,regression_target_size)
+            """
             toInvert = np.transpose(data) @ data - self.lmda * np.eye(data.shape[1])
             inverted = np.linalg.inv(toInvert)
             W = inverted @ np.transpose(data) @ labels
