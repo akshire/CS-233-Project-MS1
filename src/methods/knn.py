@@ -8,6 +8,11 @@ class KNN(object):
     def __init__(self, k=1, task_kind = "regression", help = False, help_parameters = [5,1,40,4]):
         """
             Call set_arguments function of this class.
+            Arguments:
+                k : number of neighbours
+                task_kind : regression or classification
+                help : Use the k-fold or not
+                help_parameters : parameters for k-fold
         """
         self.k = k
         self.task_kind = task_kind
@@ -39,7 +44,7 @@ class KNN(object):
                 index (not used): position of the test_point in the original array
                 bool: boolean value to determin if we are either in fit (= 0) or prediction(= 1)
             Outputs:
-                predicted label: label of the shape
+                predicted label: label of the shape (C,)
         """
         euclid_distances = self.euclidean_dist(test_point,self.train_data)
         #gets indexes of the k nearest samples
@@ -73,9 +78,9 @@ class KNN(object):
 
             Arguments:
                 training_data (np.array): training data of shape (N,D)
-                training_labels (np.array): labels of shape (N,)
+                training_labels (np.array): labels of shape (N,C)
             Returns:
-                pred_labels (np.array): labels of shape (N,)
+                pred_labels (np.array): labels of shape (N,C)
         """
         self.train_data = training_data
         self.train_labels = training_labels
