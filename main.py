@@ -73,9 +73,7 @@ def main(args):
     xtrain = normalize_fn(xtrain, xtrain.mean(0,keepdims=True), xtrain.std(0,keepdims=True))
     xtrain = append_bias_term(xtrain)
 
-    ctest = normalize_fn(ctest,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
     
-    ctrain = normalize_fn(ctrain,ctrain.mean(0,keepdims = True), ctrain.std(0,keepdims=True))
     
 
 
