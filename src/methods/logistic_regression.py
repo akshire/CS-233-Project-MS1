@@ -8,14 +8,12 @@ class LogisticRegression(object):
     Logistic regression classifier.
     """
 
-    def __init__(self, lr = 1, max_iters=500, task_kind = 'classification'):
+    def __init__(self, lr = 2.02, max_iters=1228, task_kind = 'classification'):
         """
-        Initialize the new object (see dummy_methods.py)
-        and set its arguments.
-
-        Arguments:
-            lr (float): learning rate of the gradient descent
-            max_iters (int): maximum number of iterations
+        Initializes the logistic regression model.
+        lr: learning rate
+        max_iters: maximum number of iterations
+        task_kind: 'classification' or 'regression'
         """
         self.lr = lr
         self.max_iters = max_iters
