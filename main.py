@@ -100,7 +100,7 @@ def main(args):
         elif args.task == "breed_identifying":
             task_kind = 'classification'
         help = args.kNN_help
-        help_parameters = np.array([args.Kfold_values_start,args.Kfold_values_end,args.Kfold_values_spacing])
+        help_parameters = np.array([args.Kfold_values_folds,args.Kfold_values_start,args.Kfold_values_end,args.Kfold_values_spacing])
 
         method_obj = KNN(k = args.K, task_kind = task_kind,help=help,help_parameters=help_parameters)
         pass
@@ -161,9 +161,10 @@ if __name__ == '__main__':
 
     # Feel free to add more arguments here if you need!
     parser.add_argument('--kNN_help', type=bool, default=False, help="For kNN classification, should the K-fold method be used to print the best k (much slower)")
-    parser.add_argument('--Kfold_values_start',type=int, default = 4,help="Give the starting k for k-fold")
-    parser.add_argument('--Kfold_values_end',type=int, default = 40,help="Give the end k for k-fold")
-    parser.add_argument('--Kfold_values_spacing',type=int, default = 4,help="Give the space between tries of k for k-fold")
+    parser.add_argument('--Kfold_values_folds',type=int, default = 5,help="Give the amount of folds K for K-fold")
+    parser.add_argument('--Kfold_values_start',type=int, default = 4,help="Give the starting k for K-fold")
+    parser.add_argument('--Kfold_values_end',type=int, default = 40,help="Give the end k for K-fold")
+    parser.add_argument('--Kfold_values_spacing',type=int, default = 4,help="Give the space between tries of k for K-fold")
     # MS2 arguments
     parser.add_argument('--nn_type', default="cnn", help="which network to use, can be 'Transformer' or 'cnn'")
     parser.add_argument('--nn_batch_size', type=int, default=64, help="batch size for NN training")

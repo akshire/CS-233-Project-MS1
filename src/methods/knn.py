@@ -5,7 +5,7 @@ class KNN(object):
         kNN classifier object.
     """
 
-    def __init__(self, k=1, task_kind = "regression", help = False, help_parameters = [1,40,4]):
+    def __init__(self, k=1, task_kind = "regression", help = False, help_parameters = [5,1,40,4]):
         """
             Call set_arguments function of this class.
         """
@@ -82,6 +82,9 @@ class KNN(object):
         nbOfData = training_data.shape[0]
         pred_labels = np.zeros(training_labels.shape)
         def Kfold(folds=5,start=1,spacing=4,end=40):
+            """
+                Implements a helper function to print a good indication of what k should be
+            """
             k_list = range(start,end,spacing)
             best_k = 0 # only store best value
             k_acc = 0
@@ -111,11 +114,11 @@ class KNN(object):
                 if (ave_acc > k_acc):
                     k_acc = ave_acc
                     best_k = k
-            print(f"The best k between {start} and {end} with a spacing of {spacing} is {best_k}")
+            print(f"The best k between {start} and {end} with a spacing of {spacing} is {best_k} in {folds}-Folds")
             print("It has an accuracy of :", k_acc)
 
         if (self.help & (self.task_kind == "classification")):
-            Kfold(start=self.help_parameters[0],end=self.help_parameters[1],spacing=self.help_parameters[2])
+            Kfold(folds=self.help_parameters[0],start=self.help_parameters[1],end=self.help_parameters[2],spacing=self.help_parameters[3])
 
 
 
